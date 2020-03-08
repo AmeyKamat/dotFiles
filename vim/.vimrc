@@ -23,19 +23,10 @@ set wildmenu
 set autochdir
 set tabstop=4 shiftwidth=4 expandtab
 
-function! GitBranch()
-  return system("git rev-parse --abbrev-ref HEAD 2>/dev/null | tr -d '\n'")
-endfunction
-
-function! StatuslineGit()
-  let l:branchname = GitBranch()
-  return strlen(l:branchname) > 0?'  '.l:branchname.' ':''
-endfunction
-
 set statusline=
 set statusline+=%#PmenuSel#
 set statusline+=%#LineNr#
-set statusline+=\ %f
+set statusline+=\ %F
 set statusline+=%m\
 set statusline+=%=
 set statusline+=%#CursorColumn#
@@ -46,8 +37,10 @@ set statusline+=\ %p%%
 set statusline+=\ %l:%c
 set statusline+=\ 
 
-set runtimepath^=~/.vim/bundle/NERD_tree
-set runtimepath^=~/.vim/bundle/ctrlp.vim
+call plug#begin('~/.vim/plugged')
+Plug 'kien/ctrlp.vim'
+Plug 'preservim/nerdtree'
+call plug#end()
 
 let g:ctrlp_custom_ignore = {
   \ 'dir':  '\.git$\|\.m2\|public$|log\|tmp$\|node_modules\|target\|build\|\.idea',
