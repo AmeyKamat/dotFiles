@@ -5,10 +5,12 @@ WHITE_B="\e[1;37m";
 GREEN_B="\e[1;32m";
 RED_B="\e[1;31m";
 PURPLE_B="\e[1;35m";
+BLACK_B="\e[1;30m"
 
 CYAN="\e[0;36m";
 WHITE="\e[0;37m";
 PURPLE="\e[0;35m";
+GREEN="\e[0;32m";
 
 WHITE_BG="\e[47m"
 PURPLE_BG="\e[45m"
@@ -16,26 +18,59 @@ CYAN_BG="\e[36m"
 BLUE_BG="\e[44m"
 BLACK_BG="\e[40m"
 GREEN_BG="\e[42m"
+YELLOW_BG="\e[43m";
 
 RESET="\e[00m";
 
-function bash_prompt() {
-    # Get smiley based on last status
-    local last_status=$?
-    local smiley="✔"
-    if [[ "$last_status" != "0" ]]; then
-       smiley="✘";
+function get_status_success() {
+    local status_success=""
+    if [[ $1 -eq 0 ]]; then
+        status_success="✔"
     fi
+    echo $status_success
+}
 
+function get_status_failure() {
+    local status_failure=""
+    if [[ $1 -ne 0 ]]; then
+        status_failure="✘"
+    fi
+    echo $status_failure
+}
 
-    # Get git branch
-    local git_branch=`git rev-parse --abbrev-ref HEAD 2> /dev/null`
-    #local git_branch=`git branch --show-current 2> /dev/null`
-	if [ "$git_branch" ]; then
-		git_branch=" ⎇  $git_branch "
-	fi
+function get_is_root(){
+    local is_root="♟"
+    if [[ $UID -eq 0 ]]; then
+        is_root="♚"
+    fi
+    echo $is_root
+}
 
-    # Get PWD
+function get_bg_proc(){
+local bg_proc=""
+    if [[ $(jobs -l | wc -l) -gt 0 ]]; then
+        bg_proc="⚙"
+    fi
+    echo $bg_proc
+}
+
+function get_git_dirty_status() {
+    dirty=$(git status -s 2> /dev/null | tail -n 1)
+    [[ -n $dirty ]] && echo "±"
+}
+
+function get_git_context(){
+    local git_context=""
+    if $(git rev-parse --is-inside-work-tree >/dev/null 2>&1); then
+        local ref=""
+        local dirty=`get_git_dirty_status`
+        ref="⎇ $(git symbolic-ref HEAD 2> /dev/null)" || ref="➦ $(git show-ref --head -s --abbrev |head -n1 2> /dev/null)"
+        git_context="${ref/refs\/heads\// }$dirty"
+    fi
+    echo "$git_context"
+}
+
+function get_pwd(){
     local curr_dir=${PWD/#$HOME/'~'}
     curr_dir=`echo "${curr_dir}" | sed -e s#\/#\ ⮚\ #g`
 
@@ -46,29 +81,71 @@ function bash_prompt() {
         curr_dir="... ${curr_dir:(-50)}"
     fi
 
-    curr_dir=" 🗁   ${curr_dir}"
+    curr_dir="🖿  ${curr_dir}"
+    echo "$curr_dir"
+}
+
+function get_venv(){
+    local venv=""
+    if [ "$VIRTUAL_ENV" != "" ]; then
+        venv="ℰ $(basename $VIRTUAL_ENV) "
+    fi
+    echo $venv
+}
+
+function get_title(){
+    local os=`uname -s -r`
+    local title="\033]0;${os}: \u\a"
+    echo $title
+}
+
+function bash_prompt() {
+
+    local last_status=$?
+    local status_success="$(get_status_success last_status)"
+    local status_failure="$(get_status_failure last_status)"
+
+    local is_root=" $(get_is_root)"
+    local bg_proc=" $(get_bg_proc)"
+    local git_context=" $(get_git_context) "
+    local curr_dir=" $(get_pwd) "
+    local venv=" $(get_venv) "
+    local title=`get_title`
+
+    # Build everything together
+    PROMPT="${title}\n"
+    PROMPT+="${BLACK_BG}"
+    PROMPT+=" "
+    PROMPT+="${RED_B}${status_failure}"
+    PROMPT+="${GREEN_B}${status_success}"
+    PROMPT+="${PURPLE_B}${bg_proc}"
+    PROMPT+="${GREEN_B}${is_root} $(whoami):\# "
+    PROMPT+="${PURPLE_BG}${WHITE_B}${venv}"
+    PROMPT+="${GREEN_BG}${WHITE_B}${git_context}"
+    PROMPT+="${RESET}${WHITE}${curr_dir}"
+    PROMPT+="\n${WHITE} ➤ ${RESET}"
+    echo -e "${PROMPT}"
+
+    # Get git branch
+    #local git_branch=`git rev-parse --abbrev-ref HEAD 2> /dev/null`
+    #local git_branch=`git branch --show-current 2> /dev/null`
+	#if [ "$git_branch" ]; then
+	#	git_branch=" ⎇  $git_branch "
+	#fi
+
+
+    # Get PWD
+
+
+
 
 
 
     # Get current virtual environment
-    local venv=""
-    if [ "$VIRTUAL_ENV" != "" ]; then
-        venv=" ℰ $(basename $VIRTUAL_ENV) "
-    fi
 
-    #Title
-    local os=`uname -s -r`
-    local title="\033]0;${os}: \u\a"
-    # Build everything together
-    PROMPT="${title}\n"
-    PROMPT+="${BLACK_BG}${WHITE_B} 🖳  \u "
-    PROMPT+="${BLUE_BG}${WHITE_B} ${smiley}"
-    PROMPT+="${BLUE_BG}${WHITE_B} \# "
-    PROMPT+="${PURPLE_BG}${WHITE_B}${venv}"
-    PROMPT+="${GREEN_BG}${WHITE_B}${git_branch}"
-    PROMPT+="${RESET}${CYAN}${curr_dir}"
-    PROMPT+="\n${BLUE_BG}${WHITE} ➤ ${RESET}"
-    echo -e "${PROMPT}"
+
+
+
 }
 
 PROMPT_COMMAND='PS1=$(bash_prompt)'
