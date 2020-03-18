@@ -8,7 +8,7 @@ alias cp="cp -iv"
 alias mv="mv -iv"
 alias mkdir="mkdir -pv"
 alias ll="ls -lAFh"
-alias path="echo -e ${PATH//:/\\n}"
+alias path="echo $PATH | sed -e $'s/:/\\\n/g'"
 
 # Maven aliases
 alias mci="mvn clean install"
