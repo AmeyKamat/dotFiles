@@ -5,9 +5,11 @@ PROMPT="[BASH]"
 echo "${PROMPT} Setting up Bash..."
 cp bash/.bashrc ~/.bashrc
 cp bash/.bash_profile ~/.bash_profile
-cp bash/.aliases ~/.aliases
-cp bash/.exports ~/.exports
-cp bash/.functions ~/.functions
-cp bash/.startup ~/.startup
-cp bash/.prompt ~/.prompt
+mkdir ~/.bash
+cp bash/.aliases ~/.bash/.aliases
+cp bash/.exports ~/.bash/.exports
+cp bash/.functions ~/.bash/.functions
+cp bash/.startup ~/.bash/.startup
+cp bash/.prompt ~/.bash/.prompt
+cp bash/.prompt ~/.bash/.git-customizations
 echo "${PROMPT} Bash setup complete."

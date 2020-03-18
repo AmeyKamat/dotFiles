@@ -1,14 +1,12 @@
-#!/bin/bash
-# This file installs new tools
-
-PROMPT="[TOOLS]"
-
-JAVA_VER=
+JAVA_VER="13.0.2"
 MVN_VER="3.6.3"
 MONGO_VER="4.2.3"
 NODE_VER="12.16.1"
+INTELLIJ_IDEA_VER="2019.3.3"
 
-echo "${PROMPT} Starting to install commonly used tools"
+
+
+
 
 echo
 echo "${PROMPT} Installing Maven..."
@@ -19,7 +17,7 @@ echo "${PROMPT} Maven installation complete."
 
 echo
 echo "${PROMPT} Installing MongoDB..."
-curl -fLo ~/work/apps/mongodb-${MONGO_VER}.tar.gz --create-dirs https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1604-${MONGO_VER}.tgz 
+curl -fLo ~/work/apps/mongodb-${MONGO_VER}.tar.gz --create-dirs https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1604-${MONGO_VER}.tgz
 tar xvf ~/work/apps/mongodb-${MONGO_VER}.tar.gz -C ~/work/apps/
 mv ~/work/apps/mongodb-linux-x86_64-ubuntu1604-${MONGO_VER} ~/work/apps/mongodb
 echo "${PROMPT} MongoDB installation complete."
@@ -27,6 +25,14 @@ echo "${PROMPT} MongoDB installation complete."
 echo
 echo "${PROMPT} Installing Node..."
 curl -fLo ~/work/apps/node-v${NODE_VER}-linux-x64.tar.gz --create-dirs https://nodejs.org/dist/v${NODE_VER}/node-v${NODE_VER}-linux-x64.tar.xz
-tar xvf ~/work/apps/node-v${NODE_VER}-linux-x64.tar.gz -C ~/work/apps/ 
-mv ~/work/apps/node-v${NODE_VER}-linux-x64 ~/work/apps/node 
+tar xvf ~/work/apps/node-v${NODE_VER}-linux-x64.tar.gz -C ~/work/apps/
+mv ~/work/apps/node-v${NODE_VER}-linux-x64 ~/work/apps/node
 echo "${PROMPT} Node installation complete."
+
+echo
+echo "${PROMPT} Installing Intellij Idea..."
+curl -fLo ~/work/apps/idea-${INTELIJ_IDEA_VER}.tar.gz https://download-cf.jetbrains.com/idea.ideaIC-2019.3.3.tar.gz
+tar xvf ~/work/apps/idea-${INTELIJ_IDEA_VER}.tar.gz -C ~/work/apps/
+mv ~/work/apps/idea-${INTELLIJ_IDEA_VER} ~/work/apps/idea
+./idea.sh
+echo "${PROMPT} Intellij Idea installation complete."

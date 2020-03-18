@@ -1,0 +1,30 @@
+# This file stores all aliases
+
+alias refresh="source ~/.bashrc"
+
+# Bash aliases
+
+alias cp="cp -iv"
+alias mv="mv -iv"
+alias mkdir="mkdir -pv"
+alias ll="ls -lAFh"
+alias path="echo -e ${PATH//:/\\n}"
+
+# Maven aliases
+alias mci="mvn clean install"
+alias mcist="mvn clean install -Dmaven.test.skip=true"
+alias msbr="mvn spring-boot:run"
+
+# NPM aliases
+alias ni="npm install --verbose"
+alias nrs="npm run start"
+
+# cd aliases
+alias .="cd ~/work"
+alias ~="cd ~"
+alias ..="cd .."
+mkdir apps="cd ~/work/apps"
+mkdir scripts="cd ~/work/scripts"
+mkdir projects="cd ~/work/projects"
+mkdir playground="cd ~/work/playground"
+mkdir docs="cd ~/work/docs"
